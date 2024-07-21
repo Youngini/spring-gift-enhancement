@@ -52,18 +52,14 @@ public class ProductServiceTest {
     private static final String UPDATED_PRODUCT_NAME = "Updated Product";
     private static final String UPDATED_OPTION_NAME = "Updated Option";
     private static final String NEW_OPTION_NAME = "New Option";
+    private static final String NEW_IMAGE_URL = "newImageUrl";
     private static final Integer UPDATED_PRODUCT_PRICE = 150;
 
     @BeforeEach
     public void setUp() {
         // for createProduct test
         category = new Category(CATEGORY_NAME);
-        createProductDto = new CreateProductDto();
-        createProductDto.setName(PRODUCTION_NAME);
-        createProductDto.setPrice(PRODUCT_PRICE);
-        createProductDto.setImageUrl(PRODUCT_IMAGE_URL);
-        createProductDto.setCategory(category);
-        createProductDto.setOptions(Collections.emptyList());
+        createProductDto = new CreateProductDto(PRODUCTION_NAME, PRODUCT_PRICE, PRODUCT_IMAGE_URL, category);
 
         // for updateProduct test
         existingProduct = new Product(EXISTING_PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_IMAGE_URL, category);
@@ -72,12 +68,12 @@ public class ProductServiceTest {
         existingOption.setId(OPTION_ID);
         existingProduct.setOptions(Collections.singletonList(existingOption));
 
-        updateProductDto = new UpdateProductDto(UPDATED_PRODUCT_NAME,UPDATED_PRODUCT_PRICE,  "http://newimage.url", category);
+        updateProductDto = new UpdateProductDto(UPDATED_PRODUCT_NAME,UPDATED_PRODUCT_PRICE,  NEW_IMAGE_URL, category);
 
         Option updateOption = new Option(UPDATED_OPTION_NAME, existingProduct);
-        updateOption.setId(OPTION_ID); // This is to simulate updating an existing option
+        updateOption.setId(OPTION_ID);
         Option newOption = new Option(NEW_OPTION_NAME, existingProduct);
-        newOption.setId(NEW_OPTION_ID); // This is to simulate adding a new option
+        newOption.setId(NEW_OPTION_ID);
         updateProductDto.setOptions(Arrays.asList(updateOption, newOption));
     }
 

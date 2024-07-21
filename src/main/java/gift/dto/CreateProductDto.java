@@ -5,6 +5,7 @@ import gift.domain.Option;
 import gift.domain.Product;
 import jakarta.validation.constraints.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,14 @@ public class CreateProductDto {
 
     private List<OptionDto> options;
 
+    public CreateProductDto(String productionName, Integer productPrice, String productImageUrl, Category category) {
+        this.name = productionName;
+        this.price = productPrice;
+        this.imageUrl = productImageUrl;
+        this.category = category;
+        this.options = new ArrayList<>();
+    }
+
     public Product toProduct() {
         Product product = new Product(name, price, imageUrl, category);
         List<Option> optionList = options.stream()
@@ -37,7 +46,6 @@ public class CreateProductDto {
         return product;
     }
 
-    // Getters and setters
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public Integer getPrice() { return price; }
