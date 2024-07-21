@@ -37,30 +37,47 @@ public class ProductServiceTest {
     private UpdateProductDto updateProductDto;
     private Category category;
 
+    private static final String CATEGORY_NAME = "Electronics";
+    private static final String PRODUCTION_NAME = "Test Product";
+    private static final Integer PRODUCT_PRICE = 100;
+    private static final String PRODUCT_IMAGE_URL = "imageUrl";
+
+    private static final Long PRODUCT_ID = 1L;
+    private static final Long OPTION_ID = 1L;
+    private static final Long NEW_OPTION_ID = 2L;
+
+    private static final String EXISTING_PRODUCT_NAME = "Existing Product";
+    private static final String EXISTING_OPTION_NAME = "Existing Option";
+
+    private static final String UPDATED_PRODUCT_NAME = "Updated Product";
+    private static final String UPDATED_OPTION_NAME = "Updated Option";
+    private static final String NEW_OPTION_NAME = "New Option";
+    private static final Integer UPDATED_PRODUCT_PRICE = 150;
+
     @BeforeEach
     public void setUp() {
         // for createProduct test
-        category = new Category("Electronics");
+        category = new Category(CATEGORY_NAME);
         createProductDto = new CreateProductDto();
-        createProductDto.setName("Test Product");
-        createProductDto.setPrice(100);
-        createProductDto.setImageUrl("http://image.url");
+        createProductDto.setName(PRODUCTION_NAME);
+        createProductDto.setPrice(PRODUCT_PRICE);
+        createProductDto.setImageUrl(PRODUCT_IMAGE_URL);
         createProductDto.setCategory(category);
         createProductDto.setOptions(Collections.emptyList());
 
         // for updateProduct test
-        existingProduct = new Product("Existing Product", 100, "http://image.url", category);
-        existingProduct.setId(1L);
-        Option existingOption = new Option("Existing Option", existingProduct);
-        existingOption.setId(1L);
+        existingProduct = new Product(EXISTING_PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_IMAGE_URL, category);
+        existingProduct.setId(PRODUCT_ID);
+        Option existingOption = new Option(EXISTING_OPTION_NAME, existingProduct);
+        existingOption.setId(OPTION_ID);
         existingProduct.setOptions(Collections.singletonList(existingOption));
 
-        updateProductDto = new UpdateProductDto("Updated Product",150,  "http://newimage.url", category);
+        updateProductDto = new UpdateProductDto(UPDATED_PRODUCT_NAME,UPDATED_PRODUCT_PRICE,  "http://newimage.url", category);
 
-        Option updateOption = new Option("Updated Option", existingProduct);
-        updateOption.setId(1L); // This is to simulate updating an existing option
-        Option newOption = new Option("New Option", existingProduct);
-        newOption.setId(2L); // This is to simulate adding a new option
+        Option updateOption = new Option(UPDATED_OPTION_NAME, existingProduct);
+        updateOption.setId(OPTION_ID); // This is to simulate updating an existing option
+        Option newOption = new Option(NEW_OPTION_NAME, existingProduct);
+        newOption.setId(NEW_OPTION_ID); // This is to simulate adding a new option
         updateProductDto.setOptions(Arrays.asList(updateOption, newOption));
     }
 
@@ -84,14 +101,14 @@ public class ProductServiceTest {
     @Test
     public void testUpdateProduct() {
         // Arrange
-        when(productRepository.findById(1L)).thenReturn(Optional.of(existingProduct));
+        when(productRepository.findById(PRODUCT_ID)).thenReturn(Optional.of(existingProduct));
         when(productRepository.save(any(Product.class))).thenReturn(existingProduct);
 
         // Act
-        Product updatedProduct = productService.updateProduct(1L, updateProductDto);
+        Product updatedProduct = productService.updateProduct(PRODUCT_ID, updateProductDto);
 
         // Assert
-        verify(productRepository).findById(1L);
+        verify(productRepository).findById(PRODUCT_ID);
         verify(productRepository).save(existingProduct);
 
         assertEquals(updateProductDto.getName(), updatedProduct.getName());
@@ -100,8 +117,8 @@ public class ProductServiceTest {
         assertEquals(updateProductDto.getCategory(), updatedProduct.getCategory());
 
         List<Option> updatedOptions = updatedProduct.getOptions();
-        assertEquals(2, updatedOptions.size());
-        assertEquals("Updated Option", updatedOptions.get(0).getName());
-        assertEquals("New Option", updatedOptions.get(1).getName());
+        assertEquals(NEW_OPTION_ID, updatedOptions.size());
+        assertEquals(UPDATED_OPTION_NAME, updatedOptions.get(0).getName());
+        assertEquals(NEW_OPTION_NAME, updatedOptions.get(1).getName());
     }
 }

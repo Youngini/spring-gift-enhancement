@@ -26,57 +26,63 @@ public class OptionServiceTest {
 
     private Option option;
 
+    private static final Long ID = 1L;
+    private static final Integer QUANTITY = 10;
+    private static final Integer DECREASE_QUANTITY = 5;
+    private static final Integer MINUS_QUANTITY = -5;
+    private static final Integer BIG_QUANTITY = 20;
+
     @BeforeEach
     public void setUp() {
         option = new Option("Test Option", null);
-        option.setId(1L);
-        option.setQuantity(10);
+        option.setId(ID);
+        option.setQuantity(QUANTITY);
     }
 
     @Test
     public void testDecreaseQuantitySuccess() {
         // Arrange
-        when(optionRepository.findById(1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findById(ID)).thenReturn(Optional.of(option));
 
         // Act
-        optionService.decreaseQuantity(1L, 5);
+        optionService.decreaseQuantity(ID, DECREASE_QUANTITY);
 
         // Assert
-        verify(optionRepository).findById(1L);
+        verify(optionRepository).findById(ID);
         verify(optionRepository).save(option);
-        assert(option.getQuantity() == 5);
+        assert(option.getQuantity() == QUANTITY - DECREASE_QUANTITY);
     }
 
     @Test
     public void testDecreaseQuantityThrowsEntityNotFoundException() {
         // Arrange
-        when(optionRepository.findById(1L)).thenReturn(Optional.empty());
+        when(optionRepository.findById(ID)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> optionService.decreaseQuantity(1L, 5));
-        verify(optionRepository).findById(1L);
+        assertThrows(EntityNotFoundException.class, () -> optionService.decreaseQuantity(ID, DECREASE_QUANTITY));
+        verify(optionRepository).findById(ID);
         verify(optionRepository, never()).save(any(Option.class));
     }
 
     @Test
     public void testDecreaseQuantityThrowsIllegalArgumentExceptionForNegativeAmount() {
         // Arrange
-        when(optionRepository.findById(1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findById(ID)).thenReturn(Optional.of(option));
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> optionService.decreaseQuantity(1L, -5));
-        verify(optionRepository).findById(1L);
+        assertThrows(IllegalArgumentException.class, () -> optionService.decreaseQuantity(ID, MINUS_QUANTITY));
+        verify(optionRepository).findById(ID);
         verify(optionRepository, never()).save(option);
     }
 
     @Test
     public void testDecreaseQuantityThrowsIllegalArgumentExceptionForInsufficientQuantity() {
         // Arrange
-        when(optionRepository.findById(1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findById(ID)).thenReturn(Optional.of(option));
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> optionService.decreaseQuantity(1L, 15));
-        verify(optionRepository).findById(1L);
+        assertThrows(IllegalArgumentException.class, () -> optionService.decreaseQuantity(ID, BIG_QUANTITY));
+        verify(optionRepository).findById(ID);
         verify(optionRepository, never()).save(option);
     }
 }
